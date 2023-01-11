@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model School {
+  // id field that is a number and automatically increments after its used
+  id               Int         @id @default(autoincrement())
+  // timestamps
+  createdAt        DateTime    @default(now())
+  school_name      String      @unique @db.VarChar(255)
+  is_premium       Boolean
+  school_principal String      @db.VarChar(255)
+  Professor        Professor[]
+}
+
+model Professor {
+  id                   String   @id @default(uuid())
+  // timestamps
+  createdAt            DateTime @default(now())
+  professor_name       String   @db.VarChar(255)
+  professor_asignature String   @db.VarChar(255)
+  school_id            School   @relation(fields: [schoolId], references: [id])
+  course_id            Course   @relation(fields: [courseId], references: [id])
+  professor_hobby      String   @db.VarChar(200)
+  professor_is_main    Boolean
+  schoolId             Int
+  courseId             String
+}
+
+model Student {
+  id                 String   @id @default(uuid())
+  // timestamps
+  createdAt          DateTime @default(now())
+  school_id          Int
+  student_name       String   @db.VarChar(255)
+  student_gpa        Float
+  student_birth_date DateTime
+  student_age        Int
+  course_id          Int
+}
+
+model Grade {
+  id               String   @id @default(uuid())
+  // timestamps
+  createdAt        DateTime @default(now())
+  grade_result     Float
+  grade_score      Float
+  grade_max_score  Int
+  grade_asignement String   @db.VarChar(255)
+  student_id       Int
+}
+
+model Course {
+  id                  String      @id @default(uuid())
+  // timestamps
+  createdAt           DateTime    @default(now())
+  course_total_amount Int
+  professorId         String
+  Professor           Professor[]
+}
